@@ -1,0 +1,35 @@
+<div class="container mx-auto p-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <ng-container *ngIf="arepas$ | async as arepas; else loading">
+      <div
+        *ngFor="let arepa of arepas"
+        class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 ease-in-out"
+      >
+        <img
+          [src]="arepa.image"
+          [alt]="arepa.name"
+          class="w-full h-48 object-cover"
+        />
+        <div class="p-6 flex flex-col justify-between" style="min-height: 200px;">
+          <div>
+            <h3 class="text-3xl font-extrabold text-gray-900 mb-2">{{ arepa.name }}</h3>
+            <p class="text-gray-600 text-lg mb-4">{{ arepa.description }}</p>
+          </div>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-200">
+            <span class="text-red-700 font-extrabold text-2xl">{{ arepa.price | currency : 'COP' : 'symbol' : '1.0-0' }}</span>
+            <button
+              (click)="agregarCarrito(arepa)"
+              class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2 rounded-full text-lg transition-colors duration-300 shadow-md"
+            >
+              🛒 Añadir
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #loading>
+      <p class="text-center text-gray-500 text-xl mt-12">Cargando arepas...</p>
+    </ng-template>
+    <p *ngIf="!(arepas$ | async)" class="text-center text-gray-500 text-xl col-span-full mt-12">No se pudieron cargar los productos o no hay productos disponibles. 😥</p>
+  </div>
+</div>

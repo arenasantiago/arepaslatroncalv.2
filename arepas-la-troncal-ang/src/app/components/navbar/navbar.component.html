@@ -1,0 +1,88 @@
+<nav class="bg-[#9A703F] p-4 flex items-center justify-between relative z-50">
+  <div class="flex items-center space-x-4">
+    <a routerLink="/inicio" aria-label="Ir a la página de inicio">
+      <img src="assets/img/logo-arepa.png" alt="Logo de la arepa" class="w-20 h-20" />
+    </a>
+    <ul class="hidden md:flex space-x-8 text-white text-[20px] font-medium tracking-wider" role="menu">
+      <li role="none">
+        <a routerLink="/inicio"
+           routerLinkActive="font-extrabold text-red-600 hover:text-white"
+           class="px-2 py-1 rounded-full transition-colors duration-300"
+           role="menuitem">Inicio</a>
+      </li>
+      <li role="none">
+        <a routerLink="/productos"
+           routerLinkActive="font-extrabold text-red-600 hover:text-white"
+           class="px-2 py-1 rounded-full transition-colors duration-300"
+           role="menuitem">Productos</a>
+      </li>
+      <li role="none">
+        <a routerLink="/nosotros"
+           routerLinkActive="font-extrabold text-red-600 hover:text-white"
+           class="px-2 py-1 rounded-full transition-colors duration-300"
+           role="menuitem">Nosotros</a>
+      </li>
+      <li role="none">
+        <a routerLink="/contacto"
+           routerLinkActive="font-extrabold text-red-600 hover:text-white"
+           class="px-2 py-1 rounded-full transition-colors duration-300"
+           role="menuitem">Contacto</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="flex items-center space-x-4">
+    <a routerLink="/ingresar"
+       class="hidden md:block bg-red-600 hover:bg-red-700 font-bold text-white px-7 py-3 rounded-full text-2xl transition-colors duration-300">
+      Ingresar
+    </a>
+
+    <button (click)="toggleDrawer()"
+            class="md:hidden text-white text-3xl"
+            [attr.aria-expanded]="drawerOpen"
+            aria-controls="mobile-drawer"
+            aria-label="Abrir menú de navegación">
+      <span aria-hidden="true">{{ drawerOpen ? '✕' : '☰' }}</span>
+    </button>
+
+    <button (click)="goToCart()" class="relative ml-4">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M3 3h2l.4 2M7 13h10l4-8H5.4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="7" cy="21" r="2" stroke-width="2"/><circle cx="17" cy="21" r="2" stroke-width="2"/>
+      </svg>
+      <span *ngIf="carritoCount$ | async as count"
+            class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+        {{ count }}
+      </span>
+    </button>
+  </div>
+</nav>
+
+<!-- Drawer móvil -->
+<div
+  id="mobile-drawer"
+  class="fixed top-0 right-0 h-full w-64 bg-[#9A703F] text-white shadow-lg transform transition-transform duration-300 ease-in-out z-40"
+  [class.translate-x-full]="!drawerOpen"
+  [class.translate-x-0]="drawerOpen"
+  [class.pointer-events-none]="!drawerOpen"
+  tabindex="-1"
+>
+  <div class="p-6 flex flex-col space-y-6 text-[20px] font-medium tracking-wider" role="menu">
+    <a routerLink="/inicio" (click)="closeDrawer()" class="py-2" role="menuitem">Inicio</a>
+    <a routerLink="/productos" (click)="closeDrawer()" class="py-2" role="menuitem">Productos</a>
+    <a routerLink="/nosotros" (click)="closeDrawer()" class="py-2" role="menuitem">Nosotros</a>
+    <a routerLink="/contacto" (click)="closeDrawer()" class="py-2" role="menuitem">Contacto</a>
+    <a routerLink="/ingresar"
+       (click)="closeDrawer()"
+       class="mt-6 bg-red-600 hover:bg-red-700 font-bold text-white px-7 py-3 rounded-full text-xl w-full text-center transition-colors duration-300">
+      Ingresar
+    </a>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div *ngIf="drawerOpen"
+     class="fixed inset-0 bg-black/50 z-30"
+     (click)="closeDrawer()"
+     aria-hidden="true">
+</div>
