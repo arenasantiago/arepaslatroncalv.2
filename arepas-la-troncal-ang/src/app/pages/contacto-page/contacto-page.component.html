@@ -1,0 +1,128 @@
+<app-navbar></app-navbar>
+
+<section class="bg-white py-10">
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Columna izquierda: Formulario -->
+    <div>
+      <h2 class="text-3xl font-bold mb-4">Déjanos un mensaje</h2>
+
+      <!-- Mensajes -->
+      <div *ngIf="success" class="mb-4 rounded-lg border border-green-300 bg-green-50 px-4 py-3">
+        ¡Gracias! Tu mensaje fue enviado. Te responderemos pronto.
+      </div>
+      <div *ngIf="error" class="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3">
+        Ups, algo falló. Intenta de nuevo en un momento.
+      </div>
+
+      <form
+        name="contacto-arepas"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        (ngSubmit)="onSubmit(f)"
+        #f="ngForm"
+        [class.opacity-50]="sending"
+        class="space-y-4"
+      >
+        <!-- Requerido por Netlify -->
+        <input type="hidden" name="form-name" value="contacto-arepas" />
+        <!-- Honeypot -->
+        <input type="text" name="bot-field" ngModel class="hidden" tabindex="-1" autocomplete="off" />
+
+        <div>
+          <label class="block text-sm font-medium mb-1" for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            name="nombre"
+            ngModel
+            required
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring"
+            placeholder="Tu nombre"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1" for="email">Correo</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            ngModel
+            required
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring"
+            placeholder="tucorreo@ejemplo.com"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1" for="whatsapp">WhatsApp (opcional)</label>
+          <input
+            id="whatsapp"
+            name="whatsapp"
+            type="tel"
+            ngModel
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring"
+            placeholder="+57 3XX XXX XXXX"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1" for="mensaje">Mensaje</label>
+          <textarea
+            id="mensaje"
+            name="mensaje"
+            ngModel
+            required
+            minlength="10"
+            rows="5"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring"
+            placeholder="Cuéntanos qué necesitas…"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="f.invalid || sending"
+          class="rounded-xl bg-[#9A703F] px-5 py-2.5 font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {{ sending ? 'Enviando…' : 'Enviar mensaje' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Columna derecha: Mapa + info -->
+    <div class="pt-10">
+      <h4 class="text-xl font-bold text-red-700">¿Dónde estamos?</h4>
+      <iframe
+        class="mt-4 w-full rounded-lg border border-gray-300"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.1872815104343!2d-75.2021974!3d7.979585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e5b6f003241fb27%3A0xe47777077985674a!2sArepas%20la%20troncal!5e0!3m2!1ses-419!2sco!4v1754836927948!5m2!1ses-419!2sco"
+        height="360"
+        style="border:0"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+
+      <h4 class="mt-8 text-xl font-bold text-red-700">Contacto</h4>
+      <ul class="space-y-2 mt-4">
+        <li><strong>Teléfono:</strong> +57 312 249 3344</li>
+        <li>
+          <strong>Email:</strong>
+          <a href="mailto:arepaslatroncal@hotmail.com" class="text-blue-600 underline">
+            arepaslatroncal&#64;hotmail.com
+          </a>
+        </li>
+      </ul>
+
+      <hr class="my-6" />
+
+      <h4 class="text-xl font-bold text-red-700">Horario de Atención</h4>
+      <ul class="space-y-2 mt-4">
+        <li>Lunes - Sábados: 3:00 a.m. a 12:45 p.m.</li>
+        <li>Domingo: 4:00 a.m. a 11:00 a.m.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<app-whatsapp-fab/>
+<app-footer></app-footer>
