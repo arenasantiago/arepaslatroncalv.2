@@ -42,4 +42,31 @@ export class CartService {
     this.items = [];
     this.items$.next(this.items);
   }
+
+  /** Total en pesos del carrito actual. */
+  getTotal(): number {
+    return this.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  }
+
+  /**
+   * Arma el texto del pedido para enviar por WhatsApp.
+   * Si el carrito está vacío, devuelve un saludo genérico.
+   */
+  construirMensajePedido(): string {
+    if (this.items.length === 0) {
+      return '¡Hola! Quiero hacer un pedido de Arepas La Troncal 🫓';
+    }
+    const lineas = this.items.map(
+      (item) =>
+        `• ${item.quantity} x ${item.name} — $${(item.price * item.quantity).toLocaleString('es-CO')}`,
+    );
+    const total = this.getTotal().toLocaleString('es-CO');
+    return [
+      '¡Hola! Quiero hacer este pedido de Arepas La Troncal 🫓',
+      '',
+      ...lineas,
+      '',
+      `*Total: $${total}*`,
+    ].join('\n');
+  }
 }
