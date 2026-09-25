@@ -1,0 +1,23 @@
+# Supabase CLI - Arepas La Troncal
+# Solo se declaran las propiedades que este repositorio administra.
+# `supabase config push` deja intacto en el proyecto remoto todo lo que NO aparece aqui.
+# Antes de cualquier push: `npx supabase config diff` y revisar que solo cambie lo esperado.
+project_id = "arepas-la-troncal-ang"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[auth]
+enabled = true
+# Solo el dueno del negocio usa cuentas (panel /admin): nadie puede registrarse desde la web.
+# Los administradores se crean en Supabase > Authentication > Users (ver README).
+enable_signup = false
