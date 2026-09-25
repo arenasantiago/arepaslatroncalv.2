@@ -7,7 +7,12 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:arepas-la-troncal-ang": "node dist/arepas-la-troncal-ang/server/server.mjs"
+    "serve:ssr:arepas-la-troncal-ang": "node dist/arepas-la-troncal-ang/server/server.mjs",
+    "config": "node scripts/generar-env.mjs",
+    "prestart": "npm run config",
+    "prebuild": "npm run config",
+    "pretest": "npm run config",
+    "prewatch": "npm run config"
   },
   "private": true,
   "dependencies": {
@@ -20,6 +25,7 @@
     "@angular/platform-server": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@angular/ssr": "^19.2.6",
+    "@supabase/supabase-js": "^2.117.1",
     "@tailwindcss/postcss": "^4.1.11",
     "express": "^4.18.2",
     "postcss": "^8.5.6",

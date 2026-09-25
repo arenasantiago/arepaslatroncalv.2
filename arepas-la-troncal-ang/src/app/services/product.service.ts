@@ -14,28 +14,28 @@ export class ProductService {
       name: 'Telas',
       description: 'Arepa tela de maiz blanco',
       price: 1000,
-      image: 'assets/img/arepapaquete.jpg'
+      image: 'assets/img/arepapaquete.webp'
     },
     {
       id: 2,
       name: 'Redonda',
       description: 'Arepa pequeña redonda.',
       price: 400,
-      image: 'assets/img/arepitaredondav2.png'
+      image: 'assets/img/arepitaredondav2.webp'
     },
     {
       id: 3,
       name: 'Arepa con Pollo',
       description: 'Una arepa clásica con pollo desmechado.',
       price: 8000,
-      image: 'assets/img/arepascontodorehecha.png'
+      image: 'assets/img/arepascontodorehecha.webp'
     },
     {
       id: 4,
       name: 'Arepa con todo',
       description: 'La famosa arepa costeña con un huevo frito en su interior.',
       price: 8000,
-      image: 'assets/img/contodo.png'
+      image: 'assets/img/contodo.webp'
     },
   ];
 

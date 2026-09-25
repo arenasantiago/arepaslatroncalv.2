@@ -6,6 +6,13 @@ import { CartComponent } from './pages/carrito/carrito.component';
 import { ContactoPageComponent } from './pages/contacto-page/contacto-page.component';
 
 export const routes: Routes = [
+  // Raiz explicita: con el prerender se genera un index.html que redirige a /inicio
+  // (antes '/' solo caia en el comodin '**' y no existia pagina estatica para la raiz).
+  {
+    path: '',
+    redirectTo: 'inicio',
+    pathMatch: 'full'
+  },
   {
     path: 'inicio',
     component: InicioPageComponent
