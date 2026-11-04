@@ -1,0 +1,31 @@
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="text-2xl font-extrabold text-carbon">Mensajes</h1>
+  <label class="flex items-center gap-2 text-sm font-semibold">
+    <input type="checkbox" [checked]="soloSinLeer()" (change)="alternarFiltro()" class="h-4 w-4" /> Solo sin leer
+  </label>
+</div>
+@if (error(); as e) { <p class="mt-4 rounded-xl bg-red-50 px-4 py-3 font-semibold text-red-800" role="alert">{{ e }}</p> }
+
+@if (cargando() && mensajes().length === 0) {
+  <p class="mt-10 text-center text-gray-500">Cargando mensajes…</p>
+} @else {
+  <div class="mt-6 space-y-4">
+    @for (m of mensajes(); track m.id) {
+      <article class="rounded-2xl bg-white p-5 shadow ring-1 ring-black/5" [class.border-l-4]="!m.leido" [class.border-yellow-400]="!m.leido">
+        <header class="flex flex-wrap items-baseline justify-between gap-2">
+          <p class="font-bold">{{ m.nombre }} <span class="text-sm font-normal text-gray-500">{{ m.email }}</span></p>
+          <p class="text-xs text-gray-500">{{ m.creado_en | fecha }}</p>
+        </header>
+        <p class="mt-3 whitespace-pre-line text-gray-800">{{ m.mensaje }}</p>
+        <div class="mt-4 flex flex-wrap gap-4 text-sm font-semibold">
+          <a [href]="enlaceCorreo(m)" class="text-marca-oscuro underline">Responder por correo</a>
+          @if (m.whatsapp) { <a [href]="enlaceWhatsapp(m)" target="_blank" rel="noopener" class="text-whatsapp-oscuro underline">WhatsApp +{{ m.whatsapp }}</a> }
+          <button type="button" (click)="marcar(m, !m.leido)" class="text-gray-700 underline">{{ m.leido ? 'Marcar como no leído' : 'Marcar como leído' }}</button>
+          <button type="button" (click)="eliminar(m)" class="text-red-700 underline">Eliminar</button>
+        </div>
+      </article>
+    } @empty {
+      <p class="mt-10 text-center text-gray-500">{{ soloSinLeer() ? 'No hay mensajes sin leer.' : 'Aún no hay mensajes.' }}</p>
+    }
+  </div>
+}

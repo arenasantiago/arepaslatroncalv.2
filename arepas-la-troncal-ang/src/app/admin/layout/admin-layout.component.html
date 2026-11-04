@@ -1,0 +1,23 @@
+<div class="min-h-screen bg-stone-100">
+  <header class="bg-carbon text-white shadow">
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
+      <a routerLink="/admin/pedidos" class="flex items-center gap-2 font-extrabold">
+        <img src="assets/img/logo-arepa.webp" alt="" width="36" height="36" class="h-9 w-9" /> Panel
+      </a>
+      <nav class="flex flex-wrap gap-1" aria-label="Secciones del panel">
+        @for (s of secciones; track s.ruta) {
+          <a [routerLink]="s.ruta" routerLinkActive="bg-white/20" ariaCurrentWhenActive="page"
+             class="rounded-full px-4 py-1.5 font-semibold hover:bg-white/10">{{ s.texto }}</a>
+        }
+      </nav>
+      <div class="ml-auto flex items-center gap-3 text-sm">
+        <span class="hidden text-gray-300 md:inline">{{ admin.email() }}</span>
+        <a routerLink="/inicio" class="underline hover:text-yellow-300">Ver sitio</a>
+        <button type="button" (click)="salir()" class="rounded-full bg-white/10 px-3 py-1.5 font-semibold hover:bg-white/20">Salir</button>
+      </div>
+    </div>
+  </header>
+  <main class="mx-auto max-w-7xl px-4 py-6">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,19 @@
+<article class="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/5 transition hover:shadow-xl">
+  <img [src]="producto().imagenUrl || 'assets/img/logo-arepa.webp'" [alt]="producto().nombre"
+       width="480" height="320" loading="lazy" decoding="async" class="h-48 w-full object-cover" />
+  <div class="flex flex-1 flex-col p-5">
+    <h3 class="text-2xl font-extrabold text-carbon">{{ producto().nombre }}</h3>
+    <p class="mt-1 flex-1 text-gray-600">{{ producto().descripcion }}</p>
+    <div class="mt-4 flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
+      <span class="text-2xl font-extrabold text-acento">{{ producto().precio | precio }}</span>
+      <button type="button" (click)="agregar()"
+              class="rounded-full bg-acento px-5 py-2 font-bold text-white shadow transition hover:bg-acento-oscuro"
+              [attr.aria-label]="'Agregar ' + producto().nombre + ' al pedido'">
+        {{ recienAgregado() ? '✓ Agregado' : 'Agregar' }}
+      </button>
+    </div>
+    @if (enCarrito() > 0) {
+      <p class="mt-2 text-right text-sm font-semibold text-marca-oscuro">En tu pedido: {{ enCarrito() }}</p>
+    }
+  </div>
+</article>

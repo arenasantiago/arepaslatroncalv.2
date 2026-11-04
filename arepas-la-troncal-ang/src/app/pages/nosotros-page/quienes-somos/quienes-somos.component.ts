@@ -1,8 +1,7 @@
-import {  Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-quienes-somos',
-  imports: [],
-  templateUrl: './quienes-somos.component.html'
+  templateUrl: './quienes-somos.component.html',
 })
-export class QuienesSomosComponent { }
+export class QuienesSomosComponent {}

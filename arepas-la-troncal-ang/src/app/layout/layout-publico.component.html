@@ -1,0 +1,22 @@
+<a href="#contenido"
+   class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-carbon focus:shadow-lg">
+  Saltar al contenido
+</a>
+
+@if (aviso(); as texto) {
+  <div class="bg-amber-100 px-4 py-2 text-center text-sm font-semibold text-amber-900" role="status">
+    {{ texto }}
+  </div>
+}
+
+<app-navbar />
+
+<main id="contenido" tabindex="-1" class="min-h-[60vh] outline-none">
+  <router-outlet />
+</main>
+
+@if (mostrarWhatsapp()) {
+  <app-whatsapp-fab />
+}
+
+<app-footer />

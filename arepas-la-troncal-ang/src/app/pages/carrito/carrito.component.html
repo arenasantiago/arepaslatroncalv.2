@@ -1,47 +1,166 @@
-<div class="p-6 max-w-3xl mx-auto bg-white shadow-xl rounded-2xl">
-  <h2 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Tu Carrito 🛒</h2>
-  <div *ngIf="items$ | async as items; else empty">
-    <div
-      *ngFor="let item of items"
-      class="flex items-center justify-between border-b pb-4 mb-4"
-    >
-      <div class="flex items-center space-x-4">
-        <img [src]="item.image" class="w-20 h-20 rounded-lg object-cover" />
-        <div>
-          <p class="font-bold text-xl">{{ item.name }}</p>
-          <p class="text-gray-600 text-lg mt-1">
-            {{ item.price | currency : 'COP' }} x {{ item.quantity }}
-          </p>
+<section class="mx-auto max-w-5xl px-4 py-10">
+  @if (confirmacion(); as c) {
+    <!-- Paso final: enviar por WhatsApp -->
+    <div class="mx-auto max-w-2xl rounded-2xl bg-white p-6 text-center shadow-xl ring-1 ring-black/5 md:p-10" data-prueba="confirmacion">
+      @if (c.pedido.guardado) {
+        <p class="text-5xl" aria-hidden="true">✅</p>
+        <h1 class="mt-4 text-3xl font-extrabold text-carbon">¡Pedido registrado!</h1>
+        <p class="mt-2 text-lg text-gray-600">Tu código de pedido es</p>
+        <p class="mt-1 font-mono text-4xl font-bold tracking-widest text-marca-oscuro" data-prueba="codigo-pedido">{{ c.pedido.codigo }}</p>
+        <p class="mt-4 text-gray-700">Último paso: envíanos el pedido por WhatsApp para confirmarlo y coordinar el pago.</p>
+      } @else {
+        <p class="text-5xl" aria-hidden="true">📲</p>
+        <h1 class="mt-4 text-3xl font-extrabold text-carbon">Envía tu pedido por WhatsApp</h1>
+        <p class="mt-4 text-gray-700">No pudimos registrar el pedido en línea, pero puedes enviarlo directamente por WhatsApp.</p>
+      }
+
+      <ul class="mx-auto mt-6 max-w-md divide-y divide-gray-100 text-left">
+        @for (l of c.pedido.lineas; track l.nombre) {
+          <li class="flex justify-between py-2"><span>{{ l.cantidad }} × {{ l.nombre }}</span><span class="font-semibold">{{ l.subtotal | precio }}</span></li>
+        }
+        <li class="flex justify-between py-2 text-lg font-extrabold"><span>Total</span><span data-prueba="total-confirmado">{{ c.pedido.total | precio }}</span></li>
+      </ul>
+
+      <a [href]="c.enlace" target="_blank" rel="noopener" (click)="despuesDeAbrirWhatsapp()" data-prueba="enviar-whatsapp"
+         class="mt-8 inline-flex items-center gap-2 rounded-full bg-whatsapp px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-whatsapp-oscuro">
+        Enviar pedido por WhatsApp
+      </a>
+      <p class="mt-6">
+        <a routerLink="/productos" (click)="nuevoPedido()" class="font-semibold text-marca-oscuro underline">Volver al menú</a>
+      </p>
+    </div>
+  } @else {
+    <h1 class="text-3xl font-extrabold text-carbon md:text-4xl">Tu pedido</h1>
+
+    @if (!carrito.restaurado()) {
+      <p class="mt-10 text-center text-lg text-gray-500">Cargando tu pedido…</p>
+    } @else if (carrito.lineas().length === 0) {
+      <div class="mt-10 rounded-2xl bg-white p-10 text-center shadow ring-1 ring-black/5" data-prueba="carrito-vacio">
+        <p class="text-5xl" aria-hidden="true">🫓</p>
+        <p class="mt-4 text-xl text-gray-700">Tu pedido está vacío.</p>
+        <a routerLink="/productos" class="mt-6 inline-block rounded-full bg-acento px-6 py-3 font-bold text-white hover:bg-acento-oscuro">Ver el menú</a>
+      </div>
+    } @else {
+      <div class="mt-8 grid gap-8 lg:grid-cols-5">
+        <!-- Productos -->
+        <div class="lg:col-span-3">
+          <ul class="divide-y divide-gray-100 rounded-2xl bg-white shadow ring-1 ring-black/5">
+            @for (l of carrito.lineas(); track l.id) {
+              <li class="flex gap-4 p-4" [class.opacity-60]="!l.disponible" data-prueba="linea-carrito">
+                <img [src]="l.imagen || 'assets/img/logo-arepa.webp'" [alt]="l.nombre" width="80" height="80" class="h-20 w-20 rounded-lg object-cover" />
+                <div class="flex flex-1 flex-col gap-2">
+                  <div class="flex items-start justify-between gap-2">
+                    <div>
+                      <p class="text-lg font-bold">{{ l.nombre }}</p>
+                      <p class="text-sm text-gray-600">{{ l.precio | precio }} c/u</p>
+                      @if (!l.disponible) {
+                        <p class="text-sm font-semibold text-red-700">Ya no está disponible</p>
+                      }
+                    </div>
+                    <p class="font-bold">{{ l.subtotal | precio }}</p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" (click)="sumar(l.id, l.cantidad, -1)" class="h-9 w-9 rounded-full bg-gray-100 text-xl font-bold hover:bg-gray-200"
+                            [attr.aria-label]="'Quitar una unidad de ' + l.nombre">−</button>
+                    <input type="number" inputmode="numeric" min="1" [max]="max" [value]="l.cantidad" (change)="fijarCantidad(l.id, $any($event.target).value)"
+                           class="w-16 rounded-lg border border-gray-300 px-2 py-1 text-center" [attr.aria-label]="'Cantidad de ' + l.nombre" />
+                    <button type="button" (click)="sumar(l.id, l.cantidad, 1)" [disabled]="l.cantidad >= max"
+                            class="h-9 w-9 rounded-full bg-gray-100 text-xl font-bold hover:bg-gray-200 disabled:opacity-40"
+                            [attr.aria-label]="'Agregar una unidad de ' + l.nombre">+</button>
+                    <button type="button" (click)="carrito.quitar(l.id)" class="ml-auto text-sm font-semibold text-red-700 hover:underline">Quitar</button>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+          @if (carrito.hayNoDisponibles()) {
+            <button type="button" (click)="carrito.quitarNoDisponibles()" class="mt-3 text-sm font-semibold text-red-700 underline">
+              Quitar los productos que ya no están disponibles
+            </button>
+          }
+          <div class="mt-4 flex items-center justify-between rounded-2xl bg-white p-4 text-xl font-extrabold shadow ring-1 ring-black/5">
+            <span>Total</span>
+            <span class="text-acento" data-prueba="total-carrito">{{ carrito.total() | precio }}</span>
+          </div>
+          <p class="mt-2 text-sm text-gray-500">El total final lo confirma el sistema con los precios vigentes.</p>
+          <div class="mt-4 flex gap-4">
+            <a routerLink="/productos" class="font-semibold text-marca-oscuro underline">Seguir comprando</a>
+            <button type="button" (click)="carrito.vaciar()" class="font-semibold text-gray-600 underline">Vaciar pedido</button>
+          </div>
+        </div>
+
+        <!-- Datos de entrega -->
+        <div class="lg:col-span-2">
+          @if (!catalogo.ajustes().aceptaPedidos) {
+            <div class="rounded-2xl bg-amber-50 p-6 ring-1 ring-amber-200" role="status">
+              <p class="font-semibold text-amber-900">En este momento no estamos recibiendo pedidos en línea.</p>
+              <a [href]="enlacePedidosPausados" target="_blank" rel="noopener"
+                 class="mt-4 inline-block rounded-full bg-whatsapp px-6 py-3 font-bold text-white hover:bg-whatsapp-oscuro">Escríbenos por WhatsApp</a>
+            </div>
+          } @else {
+            <form [formGroup]="form" (ngSubmit)="enviar()" novalidate class="space-y-4 rounded-2xl bg-white p-6 shadow ring-1 ring-black/5">
+              <h2 class="text-xl font-bold">Datos de entrega</h2>
+
+              <div>
+                <label for="nombre" class="mb-1 block text-sm font-semibold">Nombre</label>
+                <input id="nombre" formControlName="nombre" autocomplete="name" maxlength="80"
+                       class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('nombre')" [attr.aria-invalid]="invalido('nombre')" />
+                @if (invalido('nombre')) { <p class="mt-1 text-sm text-red-700">Escribe tu nombre.</p> }
+              </div>
+
+              <div>
+                <label for="telefono" class="mb-1 block text-sm font-semibold">Celular</label>
+                <input id="telefono" type="tel" formControlName="telefono" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="300 123 4567"
+                       class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('telefono')" [attr.aria-invalid]="invalido('telefono')" />
+                @if (invalido('telefono')) { <p class="mt-1 text-sm text-red-700">Escribe un celular válido (ej. 300 123 4567).</p> }
+              </div>
+
+              <fieldset>
+                <legend class="mb-1 block text-sm font-semibold">Entrega</legend>
+                <div class="grid grid-cols-2 gap-2">
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 has-[:checked]:border-marca has-[:checked]:bg-marca-claro">
+                    <input type="radio" formControlName="tipoEntrega" value="recoger" /> Recoger
+                  </label>
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 has-[:checked]:border-marca has-[:checked]:bg-marca-claro">
+                    <input type="radio" formControlName="tipoEntrega" value="domicilio" /> Domicilio
+                  </label>
+                </div>
+              </fieldset>
+
+              @if (esDomicilio()) {
+                <div>
+                  <label for="direccion" class="mb-1 block text-sm font-semibold">Dirección de entrega</label>
+                  <input id="direccion" formControlName="direccion" autocomplete="street-address" maxlength="200" placeholder="Barrio, calle y número"
+                         class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('direccion')" [attr.aria-invalid]="invalido('direccion')" />
+                  @if (invalido('direccion')) { <p class="mt-1 text-sm text-red-700">Escribe la dirección (mínimo 5 caracteres).</p> }
+                </div>
+              }
+
+              <div>
+                <label for="notas" class="mb-1 block text-sm font-semibold">Notas (opcional)</label>
+                <textarea id="notas" formControlName="notas" rows="2" maxlength="500" placeholder="Ej. sin cebolla, pago en efectivo"
+                          class="w-full rounded-lg border border-gray-300 px-3 py-2"></textarea>
+              </div>
+
+              <label class="flex items-start gap-2 text-sm">
+                <input type="checkbox" formControlName="aceptaDatos" class="mt-1 h-4 w-4" />
+                <span>Autorizo el uso de mis datos para gestionar este pedido (<a routerLink="/privacidad" class="underline">política de datos</a>).</span>
+              </label>
+              @if (invalido('aceptaDatos')) { <p class="text-sm text-red-700">Debes aceptar para enviar el pedido.</p> }
+
+              @if (error(); as e) {
+                <p class="rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-800" role="alert" data-prueba="error-pedido">{{ e }}</p>
+              }
+
+              <button type="submit" [disabled]="enviando()" data-prueba="confirmar-pedido"
+                      class="w-full rounded-full bg-acento px-6 py-3 text-lg font-bold text-white shadow transition hover:bg-acento-oscuro disabled:cursor-wait disabled:opacity-60">
+                {{ enviando() ? 'Registrando pedido…' : 'Confirmar pedido' }}
+              </button>
+              <p class="text-center text-xs text-gray-500">Después lo envías por WhatsApp para coordinar pago y entrega.</p>
+            </form>
+          }
         </div>
       </div>
-      <button
-        (click)="removeItem(item.id)"
-        class="text-red-500 hover:text-red-700 font-bold text-2xl transition-colors duration-300"
-      >
-        🗑️
-      </button>
-    </div>
-
-    <div class="flex justify-between items-center mt-6 pt-4 border-t-2 border-gray-200">
-      <span class="text-2xl font-extrabold">Total:</span>
-      <span class="text-2xl font-extrabold text-red-700">{{ total$ | async | currency:'COP':'symbol':'1.0-0' }}</span>
-    </div>
-
-    <div class="mt-8 flex justify-end space-x-4">
-      <button
-        (click)="clearCart()"
-        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-6 py-3 rounded-full text-lg transition-colors duration-300"
-      >
-        Vaciar Carrito
-      </button>
-      <button
-        class="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-full text-lg transition-colors duration-300 shadow-lg"
-      >
-        Finalizar Compra
-      </button>
-    </div>
-  </div>
-  <ng-template #empty>
-    <p class="text-gray-600 text-center text-xl py-8">Tu carrito está vacío. 😥</p>
-  </ng-template>
-</div>
+    }
+  }
+</section>

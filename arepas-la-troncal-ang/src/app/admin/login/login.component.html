@@ -1,0 +1,28 @@
+<main class="flex min-h-screen items-center justify-center bg-stone-100 px-4">
+  <div class="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl ring-1 ring-black/5">
+    <div class="mb-6 flex flex-col items-center gap-2">
+      <img src="assets/img/logo-arepa.webp" alt="" width="80" height="80" class="h-20 w-20" />
+      <h1 class="text-2xl font-extrabold text-carbon">Panel del negocio</h1>
+      <p class="text-sm text-gray-500">Arepas La Troncal</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate class="space-y-4">
+      <div>
+        <label for="email" class="mb-1 block text-sm font-semibold">Correo</label>
+        <input id="email" type="email" formControlName="email" autocomplete="username" class="w-full rounded-lg border border-gray-300 px-3 py-2" />
+      </div>
+      <div>
+        <label for="clave" class="mb-1 block text-sm font-semibold">Contraseña</label>
+        <input id="clave" type="password" formControlName="clave" autocomplete="current-password" class="w-full rounded-lg border border-gray-300 px-3 py-2" />
+      </div>
+      @if (error(); as e) {
+        <p class="rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-800" role="alert">{{ e }}</p>
+      }
+      <button type="submit" [disabled]="cargando()"
+              class="w-full rounded-full bg-marca px-6 py-3 font-bold text-white transition hover:bg-marca-oscuro disabled:opacity-60">
+        {{ cargando() ? 'Ingresando…' : 'Ingresar' }}
+      </button>
+    </form>
+    <p class="mt-6 text-center text-sm"><a routerLink="/inicio" class="text-gray-600 underline">Volver al sitio</a></p>
+  </div>
+</main>

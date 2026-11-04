@@ -1,56 +1,39 @@
-import { CommonModule } from '@angular/common';
-import { CartService } from './../../services/cart.service';
-import { Component, OnDestroy } from '@angular/core';
-import { Router, NavigationEnd, RouterLink, RouterLinkActive } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { Component, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-navbar',
-  standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar.component.html',
 })
-export class NavbarComponent implements OnDestroy {
-  drawerOpen = false;
-  carritoCount$: Observable<number>;
+export class NavbarComponent {
+  protected readonly carrito = inject(CartService);
+  readonly menuAbierto = signal(false);
 
-  private destroy$ = new Subject<void>();
+  readonly enlaces = [
+    { ruta: '/inicio', texto: 'Inicio' },
+    { ruta: '/productos', texto: 'Menú' },
+    { ruta: '/nosotros', texto: 'Nosotros' },
+    { ruta: '/contacto', texto: 'Contacto' },
+  ];
 
-  constructor(
-    private cartService: CartService,
-    private router: Router
-  ) {
-    // Inicializa el contador del carrito
-    this.carritoCount$ = this.cartService
-      .getCarrito()
-      .pipe(map(items => items.length));
-
-    // Cierra el drawer al navegar
-    this.router.events
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(event => {
-        if (event instanceof NavigationEnd) {
-          this.closeDrawer();
-        }
-      });
+  constructor() {
+    inject(Router)
+      .events.pipe(
+        filter((e) => e instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.menuAbierto.set(false));
   }
 
-  goToCart(): void {
-    this.router.navigate(['/carrito']);
-    this.closeDrawer();
+  alternarMenu(): void {
+    this.menuAbierto.update((v) => !v);
   }
 
-  toggleDrawer(): void {
-    this.drawerOpen = !this.drawerOpen;
-  }
-
-  closeDrawer(): void {
-    this.drawerOpen = false;
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  cerrarMenu(): void {
+    this.menuAbierto.set(false);
   }
 }

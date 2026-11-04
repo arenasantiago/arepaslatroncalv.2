@@ -1,0 +1,33 @@
+<article class="mx-auto max-w-3xl px-4 py-10 leading-relaxed text-gray-800">
+  <h1 class="text-3xl font-extrabold text-carbon md:text-4xl">Tratamiento de datos personales</h1>
+  <p class="mt-2 text-sm text-gray-500">Borrador pendiente de revisión por el negocio.</p>
+
+  <p class="mt-6">
+    {{ negocio.nombre }}, con domicilio en {{ negocio.direccion.calle }}, {{ negocio.direccion.ciudad }}
+    ({{ negocio.direccion.region }}), es responsable de los datos personales que recibe a través de este sitio,
+    conforme a la Ley 1581 de 2012 y el Decreto 1377 de 2013.
+  </p>
+
+  <h2 class="mt-8 text-xl font-bold">Qué datos recogemos</h2>
+  <ul class="mt-2 list-inside list-disc space-y-1">
+    <li>En un pedido: nombre, celular, dirección de entrega (si es a domicilio), notas y los productos pedidos.</li>
+    <li>En el formulario de contacto: nombre, correo, WhatsApp (opcional) y el mensaje.</li>
+  </ul>
+
+  <h2 class="mt-8 text-xl font-bold">Para qué los usamos</h2>
+  <p class="mt-2">
+    Solo para preparar, confirmar y entregar tu pedido, responder tus mensajes y llevar el registro de ventas del
+    negocio. No vendemos ni compartimos tus datos con terceros con fines comerciales.
+  </p>
+
+  <h2 class="mt-8 text-xl font-bold">Dónde se guardan</h2>
+  <p class="mt-2">
+    En una base de datos en la nube (Supabase) con acceso restringido al personal autorizado del negocio.
+  </p>
+
+  <h2 class="mt-8 text-xl font-bold">Tus derechos</h2>
+  <p class="mt-2">
+    Puedes conocer, actualizar, rectificar o pedir que eliminemos tus datos, y revocar esta autorización, escribiendo a
+    <a [href]="'mailto:' + negocio.email" class="font-semibold underline">{{ negocio.email }}</a>.
+  </p>
+</article>

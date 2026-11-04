@@ -1,12 +1,16 @@
-import { Component } from '@angular/core';
-import { NavbarComponent } from "../../components/navbar/navbar.component";
-import { FooterComponent } from "../../components/footer/footer.component";
-import { ProductosListComponent } from "./productos-list/productos-list.component";
-import { WhatsappFabComponent } from "../../shared/whatsapp-fab/whatsapp-fab.component";
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { PrecioPipe } from '../../core/formato';
+import { CartService } from '../../services/cart.service';
+import { CatalogoService } from '../../services/catalogo.service';
+import { ProductoCardComponent } from '../../shared/producto-card/producto-card.component';
 
 @Component({
   selector: 'app-productos-page',
-  imports: [NavbarComponent, FooterComponent, ProductosListComponent, WhatsappFabComponent],
-  templateUrl: './productos-page.component.html'
+  imports: [ProductoCardComponent, RouterLink, PrecioPipe],
+  templateUrl: './productos-page.component.html',
 })
-export class ProductosPageComponent { }
+export class ProductosPageComponent {
+  protected readonly catalogo = inject(CatalogoService);
+  protected readonly carrito = inject(CartService);
+}

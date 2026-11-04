@@ -1,0 +1,97 @@
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <h1 class="text-2xl font-extrabold text-carbon">Productos</h1>
+    <p class="text-sm text-gray-600">Los cambios se ven en la web al recargar la página.</p>
+  </div>
+  <button type="button" (click)="nuevo()" class="rounded-full bg-acento px-5 py-2 font-bold text-white hover:bg-acento-oscuro">+ Nuevo producto</button>
+</div>
+
+@if (mensaje(); as m) { <p class="mt-4 rounded-xl bg-green-50 px-4 py-3 font-semibold text-green-900" role="status">{{ m }}</p> }
+@if (error(); as e) { <p class="mt-4 rounded-xl bg-red-50 px-4 py-3 font-semibold text-red-800" role="alert">{{ e }}</p> }
+
+@if (editando(); as actual) {
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="mt-6 grid gap-4 rounded-2xl bg-white p-6 shadow ring-1 ring-black/5 md:grid-cols-3">
+    <h2 class="text-xl font-bold md:col-span-3">{{ actual === 'nuevo' ? 'Nuevo producto' : 'Editar producto' }}</h2>
+
+    <div class="md:col-span-2 space-y-4">
+      <div>
+        <label for="p-nombre" class="mb-1 block text-sm font-semibold">Nombre</label>
+        <input id="p-nombre" formControlName="nombre" maxlength="80" class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('nombre')" />
+      </div>
+      <div>
+        <label for="p-desc" class="mb-1 block text-sm font-semibold">Descripción</label>
+        <textarea id="p-desc" formControlName="descripcion" rows="2" maxlength="500" class="w-full rounded-lg border border-gray-300 px-3 py-2"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div>
+          <label for="p-precio" class="mb-1 block text-sm font-semibold">Precio (COP)</label>
+          <input id="p-precio" type="number" min="0" step="50" formControlName="precio" class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('precio')" />
+        </div>
+        <div>
+          <label for="p-cat" class="mb-1 block text-sm font-semibold">Categoría</label>
+          <select id="p-cat" formControlName="categoriaId" class="w-full rounded-lg border border-gray-300 px-3 py-2">
+            <option [ngValue]="null">Sin categoría</option>
+            @for (c of categorias(); track c.id) { <option [ngValue]="c.id">{{ c.nombre }}</option> }
+          </select>
+        </div>
+        <div>
+          <label for="p-orden" class="mb-1 block text-sm font-semibold">Orden en el menú</label>
+          <input id="p-orden" type="number" formControlName="orden" class="w-full rounded-lg border border-gray-300 px-3 py-2" />
+        </div>
+      </div>
+      <label class="flex items-center gap-2 font-semibold">
+        <input type="checkbox" formControlName="disponible" class="h-4 w-4" /> Disponible (se muestra en la web)
+      </label>
+    </div>
+
+    <div class="space-y-2">
+      <p class="text-sm font-semibold">Foto</p>
+      <img [src]="vistaPrevia() || 'assets/img/logo-arepa.webp'" alt="Vista previa" class="h-40 w-full rounded-lg object-cover ring-1 ring-black/10" />
+      <input type="file" accept="image/*" (change)="elegirArchivo($event)" class="block w-full text-sm" />
+      <p class="text-xs text-gray-500">Se reduce automáticamente a WebP (≈100 KB).</p>
+    </div>
+
+    <div class="flex gap-3 md:col-span-3">
+      <button type="submit" [disabled]="guardando()" class="rounded-full bg-marca px-6 py-2 font-bold text-white hover:bg-marca-oscuro disabled:opacity-60">
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+      <button type="button" (click)="cancelar()" class="rounded-full px-4 py-2 font-semibold text-gray-600 underline">Cancelar</button>
+    </div>
+  </form>
+}
+
+@if (cargando() && productos().length === 0) {
+  <p class="mt-10 text-center text-gray-500">Cargando menú…</p>
+} @else {
+  <div class="mt-6 overflow-x-auto rounded-2xl bg-white shadow ring-1 ring-black/5">
+    <table class="w-full min-w-[640px] text-left text-sm">
+      <thead class="bg-stone-50 text-xs uppercase text-gray-500">
+        <tr><th class="p-3">Producto</th><th class="p-3">Categoría</th><th class="p-3">Precio</th><th class="p-3">Estado</th><th class="p-3"></th></tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        @for (p of productos(); track p.id) {
+          <tr [class.opacity-60]="!p.disponible">
+            <td class="p-3">
+              <div class="flex items-center gap-3">
+                <img [src]="p.imagen_url || 'assets/img/logo-arepa.webp'" alt="" width="48" height="48" class="h-12 w-12 rounded-lg object-cover" />
+                <div><p class="font-bold">{{ p.nombre }}</p><p class="line-clamp-1 text-xs text-gray-500">{{ p.descripcion }}</p></div>
+              </div>
+            </td>
+            <td class="p-3">{{ nombreCategoria(p.categoria_id) }}</td>
+            <td class="p-3 font-semibold">{{ p.precio | precio }}</td>
+            <td class="p-3">
+              <button type="button" (click)="alternarDisponible(p)" class="rounded-full px-3 py-1 text-xs font-bold ring-1"
+                      [class]="p.disponible ? 'bg-green-100 text-green-900 ring-green-300' : 'bg-gray-100 text-gray-600 ring-gray-300'">
+                {{ p.disponible ? 'Disponible' : 'Agotado' }}
+              </button>
+            </td>
+            <td class="p-3 text-right whitespace-nowrap">
+              <button type="button" (click)="editar(p)" class="font-semibold text-marca-oscuro underline">Editar</button>
+              <button type="button" (click)="eliminar(p)" class="ml-3 font-semibold text-red-700 underline">Eliminar</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

@@ -1,128 +1,108 @@
-<app-navbar></app-navbar>
-
 <section class="bg-white py-10">
-  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-    <!-- Columna izquierda: Formulario -->
+  <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 md:grid-cols-2">
     <div>
-      <h2 class="text-3xl font-bold mb-4">Déjanos un mensaje</h2>
+      <h1 class="mb-2 text-3xl font-extrabold text-carbon md:text-4xl">Contáctanos</h1>
+      <p class="mb-6 text-gray-600">
+        ¿Pedidos grandes, eventos o preguntas? Déjanos un mensaje o
+        <a [href]="whatsappHref" target="_blank" rel="noopener" class="font-semibold text-whatsapp-oscuro underline">escríbenos por WhatsApp</a>.
+      </p>
 
-      <!-- Mensajes -->
-      <div *ngIf="success" class="mb-4 rounded-lg border border-green-300 bg-green-50 px-4 py-3">
-        ¡Gracias! Tu mensaje fue enviado. Te responderemos pronto.
-      </div>
-      <div *ngIf="error" class="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3">
-        Ups, algo falló. Intenta de nuevo en un momento.
-      </div>
+      @if (estado() === 'enviado') {
+        <div class="mb-6 rounded-xl border border-green-300 bg-green-50 px-4 py-3 text-green-900" role="status" data-prueba="contacto-ok">
+          ¡Gracias! Recibimos tu mensaje y te responderemos pronto.
+        </div>
+      }
+      @if (estado() === 'error') {
+        <div class="mb-6 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-red-900" role="alert">
+          {{ mensajeError() }}
+        </div>
+      }
 
-      <form
-        name="contacto-arepas"
-        method="POST"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
-        (ngSubmit)="onSubmit(f)"
-        #f="ngForm"
-        [class.opacity-50]="sending"
-        class="space-y-4"
-      >
-        <!-- Requerido por Netlify -->
-        <input type="hidden" name="form-name" value="contacto-arepas" />
-        <!-- Honeypot -->
-        <input type="text" name="bot-field" ngModel class="hidden" tabindex="-1" autocomplete="off" />
-
-        <div>
-          <label class="block text-sm font-medium mb-1" for="nombre">Nombre</label>
-          <input
-            id="nombre"
-            name="nombre"
-            ngModel
-            required
-            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring"
-            placeholder="Tu nombre"
-          />
+      <form [formGroup]="form" (ngSubmit)="enviar()" novalidate class="space-y-4" [class.opacity-60]="estado() === 'enviando'">
+        <div class="hidden" aria-hidden="true">
+          <label for="sitio-web">No llenar este campo</label>
+          <input id="sitio-web" type="text" tabindex="-1" autocomplete="off" [value]="trampa()" (input)="trampa.set($any($event.target).value)" />
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-1" for="email">Correo</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            ngModel
-            required
-            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring"
-            placeholder="tucorreo@ejemplo.com"
-          />
+          <label class="mb-1 block text-sm font-semibold" for="nombre">Nombre</label>
+          <input id="nombre" formControlName="nombre" autocomplete="name" maxlength="80"
+                 class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('nombre')"
+                 [attr.aria-invalid]="invalido('nombre')" aria-describedby="error-nombre" />
+          @if (invalido('nombre')) {
+            <p id="error-nombre" class="mt-1 text-sm text-red-700">Escribe tu nombre (mínimo 2 letras).</p>
+          }
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-1" for="whatsapp">WhatsApp (opcional)</label>
-          <input
-            id="whatsapp"
-            name="whatsapp"
-            type="tel"
-            ngModel
-            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring"
-            placeholder="+57 3XX XXX XXXX"
-          />
+          <label class="mb-1 block text-sm font-semibold" for="email">Correo</label>
+          <input id="email" type="email" formControlName="email" autocomplete="email" maxlength="254"
+                 class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('email')"
+                 [attr.aria-invalid]="invalido('email')" aria-describedby="error-email" placeholder="tucorreo@ejemplo.com" />
+          @if (invalido('email')) {
+            <p id="error-email" class="mt-1 text-sm text-red-700">Escribe un correo válido.</p>
+          }
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-1" for="mensaje">Mensaje</label>
-          <textarea
-            id="mensaje"
-            name="mensaje"
-            ngModel
-            required
-            minlength="10"
-            rows="5"
-            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring"
-            placeholder="Cuéntanos qué necesitas…"
-          ></textarea>
+          <label class="mb-1 block text-sm font-semibold" for="whatsapp">WhatsApp (opcional)</label>
+          <input id="whatsapp" type="tel" formControlName="whatsapp" autocomplete="tel" inputmode="tel" maxlength="20"
+                 class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('whatsapp')"
+                 [attr.aria-invalid]="invalido('whatsapp')" aria-describedby="error-whatsapp" placeholder="300 123 4567" />
+          @if (invalido('whatsapp')) {
+            <p id="error-whatsapp" class="mt-1 text-sm text-red-700">Escribe un número válido (ej. 300 123 4567).</p>
+          }
         </div>
 
-        <button
-          type="submit"
-          [disabled]="f.invalid || sending"
-          class="rounded-xl bg-[#9A703F] px-5 py-2.5 font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {{ sending ? 'Enviando…' : 'Enviar mensaje' }}
+        <div>
+          <label class="mb-1 block text-sm font-semibold" for="mensaje">Mensaje</label>
+          <textarea id="mensaje" formControlName="mensaje" rows="5" maxlength="2000"
+                    class="w-full rounded-lg border border-gray-300 px-3 py-2" [class.border-red-500]="invalido('mensaje')"
+                    [attr.aria-invalid]="invalido('mensaje')" aria-describedby="error-mensaje" placeholder="Cuéntanos qué necesitas…"></textarea>
+          @if (invalido('mensaje')) {
+            <p id="error-mensaje" class="mt-1 text-sm text-red-700">El mensaje debe tener al menos 10 caracteres.</p>
+          }
+        </div>
+
+        <div>
+          <label class="flex items-start gap-2 text-sm">
+            <input type="checkbox" formControlName="aceptaDatos" class="mt-1 h-4 w-4" />
+            <span>
+              Autorizo el tratamiento de mis datos para responder este mensaje, según la
+              <a routerLink="/privacidad" class="font-semibold underline">política de datos</a>.
+            </span>
+          </label>
+          @if (invalido('aceptaDatos')) {
+            <p class="mt-1 text-sm text-red-700">Debes aceptar para poder enviar el mensaje.</p>
+          }
+        </div>
+
+        <button type="submit" [disabled]="estado() === 'enviando'"
+                class="rounded-xl bg-marca px-6 py-3 font-bold text-white transition hover:bg-marca-oscuro disabled:cursor-not-allowed disabled:opacity-60">
+          {{ estado() === 'enviando' ? 'Enviando…' : 'Enviar mensaje' }}
         </button>
       </form>
     </div>
 
-    <!-- Columna derecha: Mapa + info -->
-    <div class="pt-10">
-      <h4 class="text-xl font-bold text-red-700">¿Dónde estamos?</h4>
-      <iframe
-        class="mt-4 w-full rounded-lg border border-gray-300"
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.1872815104343!2d-75.2021974!3d7.979585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e5b6f003241fb27%3A0xe47777077985674a!2sArepas%20la%20troncal!5e0!3m2!1ses-419!2sco!4v1754836927948!5m2!1ses-419!2sco"
-        height="360"
-        style="border:0"
-        allowfullscreen
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-      ></iframe>
+    <div>
+      <h2 class="text-xl font-bold text-acento-oscuro">¿Dónde estamos?</h2>
+      <p class="mt-2 text-gray-700">{{ negocio.direccion.calle }}, {{ negocio.direccion.ciudad }}, {{ negocio.direccion.region }}.</p>
+      <iframe class="mt-4 w-full rounded-lg border border-gray-300" [src]="mapaUrl" height="360" style="border: 0"
+              title="Mapa de ubicación de Arepas La Troncal" allowfullscreen loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
 
-      <h4 class="mt-8 text-xl font-bold text-red-700">Contacto</h4>
-      <ul class="space-y-2 mt-4">
-        <li><strong>Teléfono:</strong> +57 312 249 3344</li>
-        <li>
-          <strong>Email:</strong>
-          <a href="mailto:arepaslatroncal@hotmail.com" class="text-blue-600 underline">
-            arepaslatroncal&#64;hotmail.com
-          </a>
-        </li>
+      <h2 class="mt-8 text-xl font-bold text-acento-oscuro">Contacto</h2>
+      <ul class="mt-3 space-y-2">
+        <li><strong>WhatsApp:</strong> <a [href]="whatsappHref" target="_blank" rel="noopener" class="underline">{{ telefono }}</a></li>
+        <li><strong>Correo:</strong> <a [href]="'mailto:' + negocio.email" class="break-all underline">{{ negocio.email }}</a></li>
       </ul>
 
-      <hr class="my-6" />
-
-      <h4 class="text-xl font-bold text-red-700">Horario de Atención</h4>
-      <ul class="space-y-2 mt-4">
-        <li>Lunes - Sábados: 3:00 a.m. a 12:45 p.m.</li>
-        <li>Domingo: 4:00 a.m. a 11:00 a.m.</li>
+      <h2 class="mt-8 text-xl font-bold text-acento-oscuro">Horario de atención</h2>
+      <ul class="mt-3 space-y-2">
+        @for (h of negocio.horarios; track h.dias) {
+          <li><strong>{{ h.dias }}:</strong> {{ h.texto }}</li>
+        }
       </ul>
     </div>
   </div>
 </section>
-<app-whatsapp-fab/>
-<app-footer></app-footer>

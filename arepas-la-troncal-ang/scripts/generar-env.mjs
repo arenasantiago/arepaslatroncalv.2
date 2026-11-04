@@ -63,6 +63,7 @@ const rutas = [
   { path: '/productos', freq: 'weekly', prio: '0.9' },
   { path: '/nosotros', freq: 'monthly', prio: '0.7' },
   { path: '/contacto', freq: 'monthly', prio: '0.7' },
+  { path: '/privacidad', freq: 'yearly', prio: '0.2' },
 ];
 const hoy = new Date().toISOString().slice(0, 10);
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

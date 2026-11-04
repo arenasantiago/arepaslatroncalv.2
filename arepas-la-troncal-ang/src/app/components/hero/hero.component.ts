@@ -6,6 +6,4 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   templateUrl: './hero.component.html',
 })
-export class HeroComponent {
-
-}
+export class HeroComponent {}

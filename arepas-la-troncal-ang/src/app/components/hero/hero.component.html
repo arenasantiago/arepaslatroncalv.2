@@ -1,38 +1,24 @@
-<section
-  class="relative h-screen flex flex-col items-center justify-center text-center overflow-hidden"
->
-  <!-- overlay al 50% -->
-  <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+<section class="relative flex min-h-[85vh] flex-col items-center justify-center overflow-hidden text-center">
+  <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('assets/img/fondocarbon3.webp')" aria-hidden="true"></div>
+  <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
 
-  <!-- fondo -->
-  <div
-    class="absolute inset-0 bg-cover bg-center"
-    style="background-image:url('assets/img/fondocarbon3.webp')"
-  ></div>
+  <div class="relative z-10 flex flex-col items-center gap-6 px-4">
+    <h1 class="sr-only">Arepas La Troncal: fábrica de arepas al carbón en Caucasia, Antioquia</h1>
+    <img src="assets/img/logo.webp" alt="Arepas La Troncal" width="800" height="333" fetchpriority="high"
+         class="w-80 max-w-full md:w-[42rem]" />
 
-  <!-- contenido -->
-  <div class="relative z-10 flex flex-col items-center space-y-6 px-4 font-inkNut">
-    <!-- logo bien grande -->
-    <img
-      src="assets/img/logo.webp"
-      alt="Arepas La Troncal"
-      class="w-90 md:w-200"
-    />
-
-    <!-- subtítulos con “borde” -->
-    <div
-      class="flex flex-col md:flex-row md:space-x-12 text-white text-lg md:text-3xl font-medium"
-    >
-      <p class="drop-shadow-[0_0_2px_black] font-bold">Fábrica de arepas</p>
-      <p class="drop-shadow-[0_0_2px_black] font-bold" >Caucasia / Antioquia</p>
+    <div class="flex flex-col text-lg font-bold text-white drop-shadow-[0_0_3px_black] md:flex-row md:gap-12 md:text-3xl">
+      <p>Fábrica de arepas al carbón</p>
+      <p>Caucasia, Antioquia</p>
     </div>
 
-    <!-- CTA -->
-    <button
-      class="mt-4 font-bold bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full"
-      routerLink="/productos"
-    >
-      Ver Menú
-    </button>
+    <div class="mt-2 flex flex-col gap-3 sm:flex-row">
+      <a routerLink="/productos" class="rounded-full bg-acento px-8 py-3 text-lg font-bold text-white shadow-lg transition hover:bg-acento-oscuro">
+        Ver menú y pedir
+      </a>
+      <a routerLink="/contacto" class="rounded-full bg-white/90 px-8 py-3 text-lg font-bold text-carbon shadow-lg transition hover:bg-white">
+        Horario y ubicación
+      </a>
+    </div>
   </div>
 </section>

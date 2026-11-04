@@ -1,4 +1,49 @@
-<app-navbar/>
-<app-hero/>
-<app-whatsapp-fab/>
-<app-footer/>
+<app-hero />
+
+<section class="mx-auto max-w-7xl px-4 py-14" aria-labelledby="titulo-destacados">
+  <div class="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+    <div>
+      <h2 id="titulo-destacados" class="text-3xl font-extrabold text-carbon md:text-4xl">Nuestras arepas</h2>
+      <p class="mt-2 text-lg text-gray-600">Hechas a mano y asadas al carbón todos los días.</p>
+    </div>
+    <a routerLink="/productos" class="font-bold text-acento hover:underline">Ver el menú completo →</a>
+  </div>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    @for (producto of destacados(); track producto.id) {
+      <app-producto-card [producto]="producto" />
+    }
+  </div>
+</section>
+
+<section class="bg-marca-claro py-14" aria-labelledby="titulo-como-pedir">
+  <div class="mx-auto max-w-5xl px-4">
+    <h2 id="titulo-como-pedir" class="text-center text-3xl font-extrabold text-carbon md:text-4xl">¿Cómo pedir?</h2>
+    <ol class="mt-10 grid gap-6 md:grid-cols-3">
+      @for (paso of pasos; track paso.titulo; let i = $index) {
+        <li class="rounded-2xl bg-white p-6 text-center shadow">
+          <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-marca text-xl font-bold text-white">{{ i + 1 }}</span>
+          <h3 class="mt-4 text-xl font-bold text-carbon">{{ paso.titulo }}</h3>
+          <p class="mt-2 text-gray-600">{{ paso.texto }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<section class="mx-auto grid max-w-7xl gap-8 px-4 py-14 md:grid-cols-2 md:items-center" aria-labelledby="titulo-visitanos">
+  <img src="assets/img/asadoarepas.webp" alt="Arepas asándose al carbón en la fábrica" width="1000" height="667"
+       loading="lazy" decoding="async" class="w-full rounded-2xl shadow-lg" />
+  <div>
+    <h2 id="titulo-visitanos" class="text-3xl font-extrabold text-carbon md:text-4xl">Visítanos en {{ negocio.direccion.ciudad }}</h2>
+    <p class="mt-4 text-lg text-gray-700">{{ negocio.direccion.calle }}, {{ negocio.direccion.ciudad }}, {{ negocio.direccion.region }}.</p>
+    <ul class="mt-4 space-y-1 text-gray-700">
+      @for (h of negocio.horarios; track h.dias) {
+        <li><span class="font-semibold">{{ h.dias }}:</span> {{ h.texto }}</li>
+      }
+    </ul>
+    <a [href]="negocio.mapaUrl" target="_blank" rel="noopener"
+       class="mt-6 inline-block rounded-full bg-marca px-6 py-3 font-bold text-white transition hover:bg-marca-oscuro">
+      Cómo llegar
+    </a>
+  </div>
+</section>

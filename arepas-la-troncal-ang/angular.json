@@ -24,7 +24,15 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/assets",
-              { "glob": "**/*", "input": "src/generated-public", "output": "/" }
+              {
+                "glob": "**/*",
+                "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/generated-public",
+                "output": "/"
+              }
             ],
             "styles": [
               "src/styles.css"
@@ -79,12 +87,12 @@
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
+              "src/assets",
               {
                 "glob": "**/*",
                 "input": "public"
               }
             ],
-
             "styles": [
               "src/styles.css"
             ],
@@ -95,6 +103,6 @@
     }
   },
   "cli": {
-    "analytics": "13cfcf4d-2254-4192-9b71-37ec40db5fa2"
+    "analytics": false
   }
 }

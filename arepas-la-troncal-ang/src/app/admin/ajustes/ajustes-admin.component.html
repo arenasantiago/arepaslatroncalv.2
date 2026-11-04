@@ -1,0 +1,23 @@
+<h1 class="text-2xl font-extrabold text-carbon">Ajustes</h1>
+@if (mensaje(); as m) { <p class="mt-4 rounded-xl bg-green-50 px-4 py-3 font-semibold text-green-900" role="status">{{ m }}</p> }
+@if (error(); as e) { <p class="mt-4 rounded-xl bg-red-50 px-4 py-3 font-semibold text-red-800" role="alert">{{ e }}</p> }
+
+<form [formGroup]="form" (ngSubmit)="guardar()" class="mt-6 max-w-xl space-y-6 rounded-2xl bg-white p-6 shadow ring-1 ring-black/5">
+  <label class="flex items-start gap-3">
+    <input type="checkbox" formControlName="aceptaPedidos" class="mt-1 h-5 w-5" />
+    <span>
+      <span class="block font-bold">Recibir pedidos en línea</span>
+      <span class="text-sm text-gray-600">Si lo desactivas, la web invita a escribir por WhatsApp y no registra pedidos nuevos.</span>
+    </span>
+  </label>
+
+  <div>
+    <label for="aviso" class="block font-bold">Aviso en la parte superior de la web</label>
+    <p class="text-sm text-gray-600">Ej. "Hoy cerramos a las 11 a. m." Déjalo vacío para no mostrar nada.</p>
+    <input id="aviso" formControlName="aviso" maxlength="200" class="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2" />
+  </div>
+
+  <button type="submit" [disabled]="guardando()" class="rounded-full bg-marca px-6 py-2 font-bold text-white hover:bg-marca-oscuro disabled:opacity-60">
+    {{ guardando() ? 'Guardando…' : 'Guardar ajustes' }}
+  </button>
+</form>

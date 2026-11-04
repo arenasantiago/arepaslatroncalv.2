@@ -1,42 +1,51 @@
 @import "tailwindcss";
 
-
-body{
-  font-family: 'Quicksand', sans-serif;
-}
+/*
+ * Tokens de diseno de la marca: un solo lugar para colores, tipografia y animaciones.
+ * Tailwind v4 genera utilidades a partir de ellos (bg-marca, text-carbon, animate-fade-in...).
+ */
 @theme {
-  --animation-fade-in: fadeIn 0.8s ease-out;
-  --animation-slide-in-left: slideInLeft 0.8s ease-out;
-  --animation-slide-in-right: slideInRight 0.8s ease-out;
+  --color-marca: #9a703f;
+  --color-marca-oscuro: #7a5630;
+  --color-marca-claro: #f5ede3;
+  --color-carbon: #2f2c2c;
+  --color-acento: #dc2626;
+  --color-acento-oscuro: #b91c1c;
+  --color-whatsapp: #1fa855;
+  --color-whatsapp-oscuro: #178a45;
+
+  --font-sans: 'Quicksand', ui-sans-serif, system-ui, sans-serif;
+
+  --animate-fade-in: fadeIn 0.6s ease-out;
+  --animate-slide-in-left: slideInLeft 0.8s ease-out;
+  --animate-slide-in-right: slideInRight 0.8s ease-out;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--color-marca);
+    outline-offset: 2px;
+  }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
